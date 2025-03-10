@@ -43,7 +43,9 @@ export const metadata: Metadata = {
     'free security tools',
     'AI security advisor',
     'phishing protection',
-    'data security'
+    'data security',
+    'security tips',
+    'cyber protection guide'
   ],
   authors: [{ name: 'CyberSecTools Team' }],
   creator: 'CyberSecTools',

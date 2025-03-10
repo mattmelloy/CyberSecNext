@@ -245,8 +245,8 @@ export default function Assessment() {
       yPosition = contentStartY;
     }
     
-    // 5) Draw background rectangle
-    pdf.setFillColor(...boxColor);
+    // 5) Draw background rectangle - Fix the color spread issue
+    pdf.setFillColor(boxColor[0], boxColor[1], boxColor[2]);
     pdf.rect(margin, yPosition, contentWidth, totalBoxHeight, "F");
     
     // 6) Render the Score Title (bold)
