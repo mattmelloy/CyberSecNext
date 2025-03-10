@@ -35,21 +35,21 @@ export default function Home() {
               <Button 
                 asChild 
                 size="lg" 
-                className="text-lg bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors"
+                className="text-lg bg-transparent text-white border-2 border-white hover:bg-white hover:text-black hover:border-black transition-colors"
               >
                 <Link href="/assessment">Start Assessment</Link>
               </Button>
               <Button 
                 asChild 
                 size="lg" 
-                className="text-lg bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors"
+                className="text-lg bg-transparent text-white border-2 border-white hover:bg-white hover:text-black hover:border-black transition-colors"
               >
                 <Link href="/advisor">Ask Security Advisor</Link>
               </Button>
               <Button 
                 asChild 
                 size="lg" 
-                className="text-lg bg-transparent text-white border-white hover:bg-white hover:text-black transition-colors"
+                className="text-lg bg-transparent text-white border-2 border-white hover:bg-white hover:text-black hover:border-black transition-colors"
               >
                 <Link href="/free-security-tools">Free Security Tools</Link>
               </Button>

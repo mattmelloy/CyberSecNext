@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -12,6 +13,22 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: false,
+  async rewrites() {
+    return [
+      {
+        source: '/robots.txt',
+        destination: '/api/robots'
+      },
+      {
+        source: '/robot.txt', // Add fallback for common misspelling
+        destination: '/api/robots'
+      },
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap'
+      }
+    ];
+  }
 };
 
 module.exports = nextConfig;
