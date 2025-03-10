@@ -254,7 +254,7 @@ export default function Assessment() {
     pdf.setFontSize(16);
     pdf.setTextColor(33, 33, 33);
     let textY = yPosition + boxPadding;
-    scoreTitleLines.forEach((line) => {
+    scoreTitleLines.forEach((line: string) => {
       pdf.text(line, margin + 5, textY);
       textY += lineHeight;
     });
@@ -263,7 +263,7 @@ export default function Assessment() {
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(11);
     pdf.setTextColor(66, 66, 66);
-    descriptionLines.forEach((line) => {
+    descriptionLines.forEach((line: string) => {
       pdf.text(line, margin + 5, textY);
       textY += lineHeight;
     });
