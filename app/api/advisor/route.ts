@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
-
 const SYSTEM_PROMPT = `You are an advanced cybersecurity expert advisor for small business owners and senior staff. Your goal is to provide clear, concise, and practical cybersecurity advice based on widely accepted security standards, including ISO 27001, NIST 800-53, NIST CSF, and the Australian Essential Eight.
 
 Your primary goals are:
@@ -52,29 +49,23 @@ export async function POST(request: Request) {
     const { question } = await request.json();
 
     if (!question) {
-      return new Response(
-        JSON.stringify({ error: 'Question is required' }),
-        { 
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
+      return NextResponse.json(
+        { error: 'Question is required' },
+        { status: 400 }
       );
     }
 
     const apiKey = process.env.GOOGLE_AI_API_KEY;
     if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: 'API key not configured' }),
-        { 
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        }
+      return NextResponse.json(
+        { error: 'API key not configured' },
+        { status: 500 }
       );
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-pro',
+      model: 'gemini-2.0-flash',
     });
 
     const chat = model.startChat({
@@ -100,25 +91,16 @@ export async function POST(request: Request) {
       throw new Error('Empty response from AI');
     }
 
-    return new Response(
-      JSON.stringify({ response: text }),
-      { 
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    return NextResponse.json({ response: text });
 
   } catch (error: any) {
     console.error('Error in advisor API:', error);
     
-    return new Response(
-      JSON.stringify({ 
-        error: error.message || 'Failed to process request'
-      }),
+    return NextResponse.json(
       { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
+        error: error.message || 'Failed to process request'
+      },
+      { status: 500 }
     );
   }
 }
