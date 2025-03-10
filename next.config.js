@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -19,7 +20,7 @@ const nextConfig = {
         destination: '/api/robots'
       },
       {
-        source: '/robot.txt', // Add fallback for common misspelling
+        source: '/robot.txt',
         destination: '/api/robots'
       },
       {
@@ -27,6 +28,10 @@ const nextConfig = {
         destination: '/api/sitemap'
       }
     ];
+  },
+  webpack: (config) => {
+    config.optimization.minimize = false;
+    return config;
   }
 };
 

@@ -3,13 +3,14 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import Script from 'next/script';
 
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap',
   preload: true,
   variable: '--font-inter',
-  adjustFontFallback: true,
+  adjustFontback: true,
   fallback: [
     '-apple-system',
     'BlinkMacSystemFont',
@@ -96,6 +97,18 @@ export default function RootLayout({
         <link rel="canonical" href="https://cybersectools.com" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="robots" content="index, follow" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-P5WP305N2H"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-P5WP305N2H');
+          `}
+        </Script>
       </head>
       <body className={`${inter.className} font-sans`}>
         <ThemeProvider
