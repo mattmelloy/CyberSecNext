@@ -1,61 +1,86 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Home } from "lucide-react";
+import { Home, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isActive = (path: string) => pathname === path;
 
+  const navItems = [
+    { href: "/assessment", label: "Assessment" },
+    { href: "/advisor", label: "Security Advisor" },
+    { href: "/free-security-tools", label: "Security Tools" },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-20 items-center justify-between">
-        <div className="flex items-center pl-4">
+      <div className="container flex h-14 items-center">
+        <div className="flex items-center flex-1">
           <Link 
             href="/" 
-            className="flex items-center gap-3 transition-colors hover:text-primary"
+            className="flex items-center gap-2 transition-colors hover:text-primary"
           >
-            <Home className="h-6 w-6" />
-            <span className="text-xl font-semibold">CyberSecTools</span>
+            <Home className="h-5 w-5" />
+            <span className="font-semibold">CyberSecTools</span>
           </Link>
         </div>
-        <nav className="flex items-center gap-8">
-          <Link href="/assessment">
-            <Button 
-              variant={isActive('/assessment') ? "secondary" : "ghost"} 
-              className={cn(
-                "h-11 px-6 text-base font-medium transition-colors",
-                isActive('/assessment') ? "bg-secondary text-secondary-foreground" : "hover:bg-transparent hover:text-primary"
-              )}
-            >
-              Assessment
-            </Button>
-          </Link>
-          <Link href="/advisor">
-            <Button 
-              variant={isActive('/advisor') ? "secondary" : "ghost"}
-              className={cn(
-                "h-11 px-6 text-base font-medium transition-colors",
-                isActive('/advisor') ? "bg-secondary text-secondary-foreground" : "hover:bg-transparent hover:text-primary"
-              )}
-            >
-              Security Advisor
-            </Button>
-          </Link>
-          <Link href="/free-security-tools">
-            <Button 
-              variant={isActive('/free-security-tools') ? "secondary" : "ghost"}
-              className={cn(
-                "h-11 px-6 text-base font-medium transition-colors",
-                isActive('/free-security-tools') ? "bg-secondary text-secondary-foreground" : "hover:bg-transparent hover:text-primary"
-              )}
-            >
-              Security Tools
-            </Button>
-          </Link>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-2">
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <Button 
+                variant={isActive(item.href) ? "secondary" : "ghost"}
+                className={cn(
+                  "h-9 px-4 text-sm font-medium transition-colors",
+                  isActive(item.href) ? "bg-secondary text-secondary-foreground" : "hover:bg-transparent hover:text-primary"
+                )}
+              >
+                {item.label}
+              </Button>
+            </Link>
+          ))}
         </nav>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden p-2 hover:bg-accent rounded-md"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {isMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </button>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden absolute top-14 left-0 right-0 bg-background border-b">
+            <nav className="container py-4 flex flex-col gap-2">
+              {navItems.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  <Button 
+                    variant={isActive(item.href) ? "secondary" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-sm font-medium",
+                      isActive(item.href) ? "bg-secondary text-secondary-foreground" : "hover:bg-transparent hover:text-primary"
+                    )}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );
