@@ -14,6 +14,7 @@ export function SiteHeader() {
   const navItems = [
     { href: "/assessment", label: "Assessment" },
     { href: "/advisor", label: "Security Advisor" },
+    { href: "/security-tips", label: "Security Tips" },
     { href: "/free-security-tools", label: "Security Tools" },
   ];
 

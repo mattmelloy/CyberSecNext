@@ -84,161 +84,279 @@ export default function Assessment() {
         category: "Excellent",
         description: "Your organization demonstrates strong cybersecurity practices. Keep up the great work and stay vigilant against emerging threats.",
         icon: CheckCircle,
-        color: "text-green-500",
-        bgColor: "bg-green-50",
-        borderColor: "border-green-200"
+        color: "text-green-500 dark:text-green-400",
+        bgColor: "bg-green-50 dark:bg-green-900/20",
+        borderColor: "border-green-200 dark:border-green-900"
       };
     } else if (percentage >= 60) {
       return {
         category: "Good",
         description: "Your security posture is good but has room for improvement. Focus on addressing the recommendations below to strengthen your defenses.",
         icon: Shield,
-        color: "text-blue-500",
-        bgColor: "bg-blue-50",
-        borderColor: "border-blue-200"
+        color: "text-blue-500 dark:text-blue-400",
+        bgColor: "bg-blue-50 dark:bg-blue-900/20",
+        borderColor: "border-blue-200 dark:border-blue-900"
       };
     } else {
       return {
         category: "Needs Improvement",
         description: "Your organization is at risk and needs significant security improvements. Prioritize implementing the recommendations below to protect your business.",
         icon: AlertTriangle,
-        color: "text-red-500",
-        bgColor: "bg-red-50",
-        borderColor: "border-red-200"
+        color: "text-red-500 dark:text-red-400",
+        bgColor: "bg-red-50 dark:bg-red-900/20",
+        borderColor: "border-red-200 dark:border-red-900"
       };
     }
   };
 
   const generatePDF = async () => {
-    if (!resultsRef.current) return;
+  if (!resultsRef.current) return;
 
-    try {
-      toast({
-        title: "Generating PDF",
-        description: "Please wait while we prepare your report...",
-      });
+  try {
+    toast({
+      title: "Generating PDF",
+      description: "Please wait while we prepare your report...",
+    });
 
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 20;
-      const contentWidth = pageWidth - (margin * 2);
-      const footerHeight = 20;
-      const maxContentHeight = pageHeight - footerHeight - margin;
-      
-      const addFooter = (pageNumber: number) => {
-        const totalPages = pdf.getNumberOfPages();
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(10);
-        pdf.setTextColor(128, 128, 128);
-        
-        pdf.setDrawColor(200, 200, 200);
-        pdf.line(margin, pageHeight - footerHeight, pageWidth - margin, pageHeight - footerHeight);
-        
-        pdf.text(
-          `Page ${pageNumber} of ${totalPages}`,
-          pageWidth - margin,
-          pageHeight - (footerHeight / 2),
-          { align: "right" }
-        );
-        
-        pdf.text(
-          "cybersectools.com",
-          margin,
-          pageHeight - (footerHeight / 2)
-        );
-      };
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.setFillColor(245, 245, 245);
-      pdf.rect(0, 0, pageWidth, 40, 'F');
+    const margin = 20;
+    const footerHeight = 20;
+    const headerHeight = 30;
+    const contentStartY = headerHeight + 15;
+    const contentWidth = pageWidth - margin * 2;
+    const lineHeight = 6; // Height per text line
+
+    // We'll keep track of our current writing position (y).
+    let yPosition = contentStartY;
+
+    // 1) Header
+    const addHeader = () => {
+      pdf.setFillColor(30, 144, 255); // Blue background
+      pdf.rect(0, 0, pageWidth, headerHeight, "F");
+      pdf.setTextColor(255, 255, 255);
       pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(24);
-      pdf.setTextColor(33, 33, 33);
-      pdf.text("Cybersecurity Assessment Report", margin, 25);
-
+      pdf.setFontSize(20);
+      pdf.text("Cybersecurity Assessment Report", pageWidth / 2, headerHeight / 2 + 5, {
+        align: "center",
+      });
+    
+      // After drawing the header, reset the font/style for normal body text
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(12);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text(`Assessment Date: ${format(assessmentDate, 'PPP')}`, margin, 45);
-
-      const scorePercentage = Math.round((quizState.score / maxPossibleScore) * 100);
-      const scoreInfo = getScoreCategory(quizState.score);
-      
-      pdf.setFillColor(scorePercentage >= 80 ? 220 : scorePercentage >= 60 ? 230 : 254, 
-                      scorePercentage >= 80 ? 252 : scorePercentage >= 60 ? 242 : 226, 
-                      scorePercentage >= 80 ? 231 : scorePercentage >= 60 ? 248 : 226);
-      pdf.rect(margin, 60, contentWidth, 30, 'F');
-      
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(16);
       pdf.setTextColor(33, 33, 33);
-      pdf.text(`Score: ${scorePercentage}% - ${scoreInfo.category}`, margin + 5, 75);
-      
+    };
+
+    // 2) Footer
+    const addFooter = (pageNumber: number) => {
+      const totalPages = pdf.getNumberOfPages();
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      pdf.setTextColor(128, 128, 128);
+
+      // Divider line
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(margin, pageHeight - footerHeight, pageWidth - margin, pageHeight - footerHeight);
+
+      // Page numbering
+      pdf.text(`Page ${pageNumber} of ${totalPages}`, pageWidth - margin, pageHeight - footerHeight / 2, {
+        align: "right",
+      });
+
+      // Website
+      pdf.text("cybersectools.com", margin, pageHeight - footerHeight / 2);
+    };
+
+    // 3) Pagination helper (line-by-line)
+    const checkAndAddPage = () => {
+      // If we exceed the usable space, add a page and reset yPosition
+      if (yPosition > pageHeight - footerHeight - margin) {
+        addFooter(pdf.getNumberOfPages());
+        pdf.addPage();
+        addHeader();
+        yPosition = contentStartY;
+      }
+    };
+
+    // Initialize first page
+    addHeader();
+
+    // ---------------------------
+    // Helper to print an array of lines line-by-line with pagination
+    // ---------------------------
+    const printLines = (lines: string[]) => {
+      lines.forEach((line) => {
+        checkAndAddPage();
+        pdf.text(line, margin, yPosition);
+        yPosition += lineHeight;
+      });
+    };
+
+    // ---------------------------
+    // Assessment Date
+    // ---------------------------
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+
+    checkAndAddPage();
+    pdf.text(`Assessment Date: ${format(assessmentDate, "PPP")}`, margin, yPosition);
+    yPosition += lineHeight + 4; // Add a small gap after the date
+
+    // ---------------------------
+    // Score Section
+    // ---------------------------
+    const scorePercentage = Math.round((quizState.score / maxPossibleScore) * 100);
+    const scoreInfo = getScoreCategory(quizState.score);
+    
+    // 1) Prepare texts
+    const scoreTitle = `Score: ${scorePercentage}% - ${scoreInfo.category}`;
+    const boxColor = scorePercentage >= 80
+      ? [220, 252, 231]  // green-ish
+      : scorePercentage >= 60
+        ? [230, 242, 248] // blue-ish
+        : [254, 226, 226]; // red-ish
+    
+    // 2) Split text into lines
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.setTextColor(33, 33, 33);
+    const scoreTitleLines = pdf.splitTextToSize(scoreTitle, contentWidth - 10);
+    const scoreTitleHeight = scoreTitleLines.length * lineHeight;
+    
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(11);
+    pdf.setTextColor(66, 66, 66);
+    const descriptionLines = pdf.splitTextToSize(scoreInfo.description, contentWidth - 10);
+    const descriptionHeight = descriptionLines.length * lineHeight;
+    
+    // 3) Calculate total box height
+    const boxPadding = 10;
+    const totalBoxHeight = scoreTitleHeight + descriptionHeight + boxPadding * 2;
+    
+    // 4) Check pagination before drawing
+    checkAndAddPage();
+    if (yPosition + totalBoxHeight > pageHeight - footerHeight - margin) {
+      addFooter(pdf.getNumberOfPages());
+      pdf.addPage();
+      addHeader();
+      yPosition = contentStartY;
+    }
+    
+    // 5) Draw background rectangle
+    pdf.setFillColor(...boxColor);
+    pdf.rect(margin, yPosition, contentWidth, totalBoxHeight, "F");
+    
+    // 6) Render the Score Title (bold)
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.setTextColor(33, 33, 33);
+    let textY = yPosition + boxPadding;
+    scoreTitleLines.forEach((line) => {
+      pdf.text(line, margin + 5, textY);
+      textY += lineHeight;
+    });
+    
+    // 7) Render the Description (normal)
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(11);
+    pdf.setTextColor(66, 66, 66);
+    descriptionLines.forEach((line) => {
+      pdf.text(line, margin + 5, textY);
+      textY += lineHeight;
+    });
+    
+    // 8) Update yPosition to move below the box
+    yPosition += totalBoxHeight + 10;
+
+    // ---------------------------
+    // Recommendations Title
+    // ---------------------------
+    checkAndAddPage();
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(14);
+    pdf.setTextColor(33, 33, 33);
+    pdf.text("Detailed Recommendations", margin, yPosition);
+    yPosition += lineHeight + 4;
+
+    // ---------------------------
+    // Feedback Items: line-by-line approach
+    // ---------------------------
+    quizState.feedbackItems.forEach((item, index) => {
+      const question = getQuestionById(item.questionId);
+      const selectedAnswer = question?.answers[parseInt(item.selectedAnswerIndex)];
+
+      // 1) Category line
+      checkAndAddPage();
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(12);
+      pdf.setTextColor(33, 33, 33);
+      pdf.text(`${index + 1}. ${question?.category}`, margin, yPosition);
+      yPosition += lineHeight;
+
+      // 2) Question text
+      const questionLines = pdf.splitTextToSize(
+        `Question: ${question?.question}`,
+        contentWidth
+      );
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(11);
-      pdf.setTextColor(66, 66, 66);
-      const descriptionLines = pdf.splitTextToSize(scoreInfo.description, contentWidth - 10);
-      pdf.text(descriptionLines, margin + 5, 83);
-
-      let yPosition = 105;
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(14);
       pdf.setTextColor(33, 33, 33);
-      pdf.text("Detailed Recommendations", margin, yPosition);
-      yPosition += 10;
+      printLines(questionLines);
 
-      quizState.feedbackItems.forEach((item, index) => {
-        const question = getQuestionById(item.questionId);
-        const selectedAnswer = question?.answers[parseInt(item.selectedAnswerIndex)];
+      // Optional spacing
+      yPosition += 2;
 
-        if (yPosition > maxContentHeight) {
-          addFooter(pdf.getNumberOfPages());
-          pdf.addPage();
-          yPosition = margin + 10;
-        }
+      // 3) Answer text (italic)
+      const answerLines = pdf.splitTextToSize(
+        `Answer: ${selectedAnswer?.text}`,
+        contentWidth
+      );
+      pdf.setFont("helvetica", "italic");
+      printLines(answerLines);
 
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(12);
-        pdf.setTextColor(33, 33, 33);
-        pdf.text(`${index + 1}. ${question?.category}`, margin, yPosition);
-        yPosition += 7;
+      yPosition += 2;
 
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(11);
-        pdf.setTextColor(66, 66, 66);
-        const questionLines = pdf.splitTextToSize(`Question: ${question?.question}`, contentWidth - 10);
-        pdf.text(questionLines, margin, yPosition);
-        yPosition += (questionLines.length * 6);
+      // 4) Recommendation/Feedback text
+      const recommendationLines = pdf.splitTextToSize(item.feedback, contentWidth);
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(11);
+      // Slightly different color for emphasis
+      pdf.setTextColor(71, 85, 105);
+      printLines(recommendationLines);
 
-        pdf.setFont("helvetica", "italic");
-        const answerLines = pdf.splitTextToSize(`Answer: ${selectedAnswer?.text}`, contentWidth - 10);
-        pdf.text(answerLines, margin, yPosition);
-        yPosition += (answerLines.length * 6);
+      // 5) Divider line
+      yPosition += 4;
+      pdf.setDrawColor(200, 200, 200);
+      checkAndAddPage();
+      pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 6;
 
-        pdf.setFont("helvetica", "normal");
-        pdf.setTextColor(71, 85, 105);
-        const recommendationLines = pdf.splitTextToSize(item.feedback, contentWidth - 10);
-        pdf.text(recommendationLines, margin, yPosition);
-        yPosition += (recommendationLines.length * 6) + 10;
-      });
+      // Reset color for next block
+      pdf.setTextColor(33, 33, 33);
+    });
 
-      addFooter(pdf.getNumberOfPages());
+    // Footer on the last page
+    addFooter(pdf.getNumberOfPages());
 
-      pdf.save(`cybersecurity-assessment-${format(assessmentDate, 'yyyy-MM-dd')}.pdf`);
+    // Finally, save the PDF
+    pdf.save(`cybersecurity-assessment-${format(assessmentDate, "yyyy-MM-dd")}.pdf`);
 
-      toast({
-        title: "PDF Generated",
-        description: "Your assessment report has been downloaded.",
-      });
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate PDF. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+    toast({
+      title: "PDF Generated",
+      description: "Your assessment report has been downloaded.",
+    });
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    toast({
+      title: "Error",
+      description: "Failed to generate PDF. Please try again.",
+      variant: "destructive",
+    });
+  }
+};
 
   const isComplete = quizState.currentQuestion === quizQuestions.length - 1 && 
                      quizState.answers[currentQuestion.id];
@@ -314,7 +432,7 @@ export default function Assessment() {
                 </div>
               </>
             ) : (
-              <div>
+              <div ref={resultsRef}>
                 <div className="flex justify-end mb-4">
                   <Button
                     onClick={generatePDF}
@@ -326,50 +444,48 @@ export default function Assessment() {
                   </Button>
                 </div>
 
-                <div ref={resultsRef}>
-                  <div className={`text-center mb-6 p-6 rounded-lg ${scoreInfo.bgColor} ${scoreInfo.borderColor} border`}>
-                    <div className="flex justify-center mb-4" ref={chartRef}>
-                      <div className="relative">
-                        <ScorePieChart score={scorePercentage} size={140} />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <p className="text-3xl font-bold">{scorePercentage}%</p>
-                        </div>
+                <div className={`text-center mb-6 p-6 rounded-lg border ${scoreInfo.bgColor} ${scoreInfo.borderColor}`}>
+                  <div className="flex justify-center mb-4" ref={chartRef}>
+                    <div className="relative">
+                      <ScorePieChart score={scorePercentage} size={140} />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <p className="text-3xl font-bold">{scorePercentage}%</p>
                       </div>
                     </div>
-                    <h2 className="text-2xl font-bold mb-2">{scoreInfo.category}</h2>
-                    <p className="text-muted-foreground whitespace-pre-line">{scoreInfo.description}</p>
-                    <p className="text-sm text-muted-foreground mt-4">
-                      Assessment Date: {format(assessmentDate, 'PPP')}
-                    </p>
                   </div>
-                  
-                  <div className="text-left mt-8">
-                    <h3 className="text-xl font-semibold mb-4">Recommendations</h3>
-                    <div className="space-y-4">
-                      {quizState.feedbackItems.map((item, index) => {
-                        const question = getQuestionById(item.questionId);
-                        const selectedAnswer = question?.answers[parseInt(item.selectedAnswerIndex)];
-                        return (
-                          <div key={index} className="p-4 bg-muted rounded-lg border border-border">
-                            <h4 className="font-semibold mb-2 text-primary">
-                              {question?.category}
-                            </h4>
-                            <div className="mb-3 text-sm">
-                              <p className="font-medium text-primary/80 mb-1">Question:</p>
-                              <p className="mb-2">{question?.question}</p>
-                              <p className="font-medium text-primary/80 mb-1">Your Answer:</p>
-                              <p className="mb-2">{selectedAnswer?.text}</p>
-                            </div>
-                            <div className="text-sm bg-background p-3 rounded">
-                              <p className="font-medium text-primary/80 mb-1">Recommendation:</p>
-                              <div className="text-muted-foreground whitespace-pre-line">
-                                {formatFeedback(item.feedback)}
-                              </div>
+                  <h2 className={`text-2xl font-bold mb-2 ${scoreInfo.color}`}>{scoreInfo.category}</h2>
+                  <p className="text-muted-foreground">{scoreInfo.description}</p>
+                  <p className="text-sm text-muted-foreground mt-4">
+                    Assessment Date: {format(assessmentDate, 'PPP')}
+                  </p>
+                </div>
+                
+                <div className="text-left mt-8">
+                  <h3 className="text-xl font-semibold mb-4">Recommendations</h3>
+                  <div className="space-y-4">
+                    {quizState.feedbackItems.map((item, index) => {
+                      const question = getQuestionById(item.questionId);
+                      const selectedAnswer = question?.answers[parseInt(item.selectedAnswerIndex)];
+                      return (
+                        <div key={index} className="p-4 bg-muted rounded-lg border border-border">
+                          <h4 className="font-semibold mb-2 text-primary">
+                            {question?.category}
+                          </h4>
+                          <div className="mb-3 text-sm">
+                            <p className="font-medium text-primary/80 mb-1">Question:</p>
+                            <p className="mb-2">{question?.question}</p>
+                            <p className="font-medium text-primary/80 mb-1">Your Answer:</p>
+                            <p className="mb-2">{selectedAnswer?.text}</p>
+                          </div>
+                          <div className="text-sm bg-background p-3 rounded">
+                            <p className="font-medium text-primary/80 mb-1">Recommendation:</p>
+                            <div className="text-muted-foreground">
+                              {formatFeedback(item.feedback)}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 

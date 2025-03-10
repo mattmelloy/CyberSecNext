@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Shield, FileCheck, Users, Brain, AlertOctagon, DollarSign, Target } from "lucide-react";
+import { Shield, FileCheck, Users, Brain, AlertOctagon, DollarSign, Target, BookOpen } from "lucide-react";
 import Link from "next/link";
 import {
   Accordion,
@@ -105,7 +105,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-12">
             Comprehensive Security Solutions
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-5xl mx-auto px-4">
             <Link href="/assessment" className="block">
               <Card className="p-6 h-full hover:shadow-lg transition-shadow">
                 <Shield className="w-12 h-12 mb-4 text-primary" />
@@ -121,6 +121,15 @@ export default function Home() {
                 <h3 className="text-xl font-semibold mb-2">Security Advisor</h3>
                 <p className="text-muted-foreground">
                   Get expert answers to your cybersecurity questions
+                </p>
+              </Card>
+            </Link>
+            <Link href="/security-tips" className="block">
+              <Card className="p-6 h-full hover:shadow-lg transition-shadow">
+                <BookOpen className="w-12 h-12 mb-4 text-primary" />
+                <h3 className="text-xl font-semibold mb-2">Security Tips</h3>
+                <p className="text-muted-foreground">
+                  Essential cybersecurity tips and best practices
                 </p>
               </Card>
             </Link>
