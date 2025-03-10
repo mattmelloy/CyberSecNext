@@ -10,7 +10,7 @@ const inter = Inter({
   display: 'swap',
   preload: true,
   variable: '--font-inter',
-  adjustFontback: true,
+  adjustFontFallback: true,
   fallback: [
     '-apple-system',
     'BlinkMacSystemFont',
