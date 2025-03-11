@@ -25,6 +25,14 @@ const nextConfig = {
       {
         source: '/sitemap.xml',
         destination: '/api/sitemap'
+      },
+      {
+        source: '/simple-assessment',
+        destination: '/assessment'
+      },
+      {
+        source: '/freesecuritytools',
+        destination: '/free-security-tools'
       }
     ];
   },
