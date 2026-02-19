@@ -31,7 +31,7 @@ export function SiteHeader() {
             className="inline-flex items-center gap-2 leading-none transition-colors hover:text-primary"
           >
             <ShieldCheck className="h-7 w-7 text-primary -mt-px" />
-            <span className="font-semibold text-xl tracking-tight leading-none">CyberSecTools</span>
+            <span className="font-semibold text-xl tracking-tight leading-none">CyberSecTest</span>
           </Link>
         </div>
 

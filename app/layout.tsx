@@ -10,7 +10,7 @@ import { SiteFooter } from "@/components/site-footer";
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "CyberSecTools",
+  "name": "CyberSecTest",
   "description": "Free cyber security assessment and guidance for Australian small businesses",
   "url": "https://cybersectools.com",
   "potentialAction": {
@@ -23,7 +23,7 @@ const jsonLd = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "CyberSecTools",
+  "name": "CyberSecTest",
   "url": "https://cybersectools.com",
   "logo": "https://cybersectools.com/favicon.svg",
   "contactPoint": {
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://cybersectools.com'),
   title: {
     default: 'Australian Small Business Cyber Security Health Check',
-    template: '%s | CyberSecTools'
+    template: '%s | CyberSecTest'
   },
   description: 'Free cyber security assessment for Australian small businesses. Get a tailored action plan, essential security guidance, and trusted tools aligned to ACSC best practice.',
   keywords: [
@@ -72,9 +72,9 @@ export const metadata: Metadata = {
     'security tips',
     'cyber protection guide'
   ],
-  authors: [{ name: 'CyberSecTools Team' }],
-  creator: 'CyberSecTools',
-  publisher: 'CyberSecTools',
+  authors: [{ name: 'CyberSecTest Team' }],
+  creator: 'CyberSecTest',
+  publisher: 'CyberSecTest',
   formatDetection: {
     email: false,
     address: false,
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
     title: 'Australian Small Business Cyber Security Health Check',
     description: 'Free cyber security assessment for Australian small businesses with a tailored action plan and practical guidance.',
     url: 'https://cybersectools.com',
-    siteName: 'CyberSecTools',
+    siteName: 'CyberSecTest',
     locale: 'en_AU',
     type: 'website',
   },

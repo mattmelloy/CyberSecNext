@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 
 export const metadata = {
   title: "Terms",
-  description: "Terms of use for CyberSecTools",
+  description: "Terms of use for CyberSecTest",
 };
 
 export default function TermsPage() {

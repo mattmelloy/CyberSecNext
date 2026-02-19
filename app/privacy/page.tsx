@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 
 export const metadata = {
   title: "Privacy",
-  description: "Privacy policy for CyberSecTools",
+  description: "Privacy policy for CyberSecTest",
 };
 
 export default function PrivacyPage() {

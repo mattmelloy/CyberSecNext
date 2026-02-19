@@ -11,7 +11,7 @@ export function SiteFooter() {
           <div className="pl-2">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-8 w-8 text-primary" />
-              <span className="font-semibold text-lg">CyberSecTools</span>
+              <span className="font-semibold text-lg">CyberSecTest</span>
             </div>
             <p className="text-sm text-muted-foreground mt-3">
               Free cyber security guidance and assessments designed for Australian
@@ -98,7 +98,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-8 text-xs text-muted-foreground">
-          © {year} CyberSecTools. All rights reserved.
+          © {year} CyberSecTest. All rights reserved.
         </div>
       </div>
     </footer>

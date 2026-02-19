@@ -20,7 +20,7 @@ export default function AccessibilityPage() {
               Accessibility Statement
             </h1>
             <p className="text-xl text-muted-foreground">
-              CyberSecTools is committed to ensuring digital accessibility for people with
+              CyberSecTest is committed to ensuring digital accessibility for people with
               disabilities. We are continually improving the user experience for everyone.
             </p>
           </header>
@@ -178,7 +178,7 @@ export default function AccessibilityPage() {
             <h2 className="text-2xl font-semibold mb-4">Feedback & Contact</h2>
             <Card className="p-6">
               <p className="text-muted-foreground mb-4">
-                We welcome feedback on the accessibility of CyberSecTools. Please let us know if
+                We welcome feedback on the accessibility of CyberSecTest. Please let us know if
                 you encounter any barriers or have suggestions for improvement:
               </p>
               <div className="space-y-2">
